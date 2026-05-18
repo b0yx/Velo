@@ -21,15 +21,16 @@ from clipper import process_clip
 
 # --- THEME CONFIGURATION ---
 # Colors are defined as (Light Mode, Dark Mode)
-BG_COLOR = ("#F0F2F5", "#0B0B0F")
-SIDEBAR_COLOR = ("#FFFFFF", "#16161D")
-CARD_COLOR = ("#FFFFFF", "#1C1C24")
-ACCENT_COLOR = ("#0066FF", "#00D2FF")
-ACCENT_HOVER = ("#0052CC", "#00B4D8")
+BG_COLOR = ("#FAFAFA", "#030303")
+SIDEBAR_COLOR = ("#FFFFFF", "#09090B")
+CARD_COLOR = ("#FFFFFF", "#121217")
+BORDER_COLOR = ("#E4E4E7", "#1E1E24")
+ACCENT_COLOR = ("#10B981", "#10B981")
+ACCENT_HOVER = ("#059669", "#059669")
 DANGER_COLOR = ("#DC2626", "#E63946")
 DANGER_HOVER = ("#B91C1C", "#C1121F")
-TEXT_MAIN = ("#111827", "#FFFFFF")
-TEXT_SUB = ("#6B7280", "#A0A0B0")
+TEXT_MAIN = ("#09090B", "#F4F4F5")
+TEXT_SUB = ("#71717A", "#A1A1AA")
 
 FONT_MAIN = "Inter"
 
@@ -67,7 +68,7 @@ class AppUI(ctk.CTk):
         self.setup_ui()
 
     def create_card(self, parent):
-        return ctk.CTkFrame(parent, fg_color=CARD_COLOR, corner_radius=15, border_width=1, border_color=("#E5E7EB", "#2A2A35"))
+        return ctk.CTkFrame(parent, fg_color=CARD_COLOR, corner_radius=15, border_width=1, border_color=BORDER_COLOR)
 
     def setup_ui(self):
         self.sidebar_frame = ctk.CTkFrame(self, width=220, corner_radius=0, fg_color=SIDEBAR_COLOR)
