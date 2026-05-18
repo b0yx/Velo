@@ -231,3 +231,28 @@ def vtt_to_md(vtt_filepath, video_info=None):
     except Exception as e:
         print(f"Error converting VTT to MD: {e}")
         return False
+
+def get_playlists_path():
+    return get_app_dir() / "playlists.json"
+
+def load_playlists():
+    """Load the list of installed/subscribed playlists."""
+    playlists_path = get_playlists_path()
+    if playlists_path.exists():
+        try:
+            with open(playlists_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return []
+    return []
+
+def save_playlists(playlists):
+    """Save the list of installed/subscribed playlists."""
+    try:
+        with open(get_playlists_path(), 'w', encoding='utf-8') as f:
+            json.dump(playlists, f, indent=4)
+        return True
+    except Exception as e:
+        print(f"Error saving playlists: {e}")
+        return False
+
