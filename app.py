@@ -18,6 +18,26 @@ from utils import load_settings, save_settings, load_history, add_to_history, cl
 
 APP_VERSION = "1.0.0-pro"
 
+# Auto-convert logo to clean transparent background
+try:
+    from PIL import Image
+    logo_path = Path("static") / "logo.png"
+    if logo_path.exists():
+        img = Image.open(logo_path).convert("RGBA")
+        datas = img.getdata()
+        bg_color = datas[0]
+        new_data = []
+        for item in datas:
+            dist = ((item[0] - bg_color[0])**2 + (item[1] - bg_color[1])**2 + (item[2] - bg_color[2])**2)**0.5
+            if dist < 60:
+                new_data.append((0, 0, 0, 0))
+            else:
+                new_data.append(item)
+        img.putdata(new_data)
+        img.save(logo_path, "PNG")
+except Exception as e:
+    print(f"Automatic logo transparency processing skipped: {e}")
+
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 CORS(app)
