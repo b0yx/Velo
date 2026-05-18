@@ -14,7 +14,7 @@ from tkinter import filedialog
 
 from downloader import VeloDownloader
 from clipper import process_clip
-from utils import load_settings, save_settings, load_history, add_to_history, clear_history, get_history_stats, open_folder, open_file
+from utils import load_settings, save_settings, load_history, add_to_history, clear_history, get_history_stats, open_folder, open_file, load_playlists, save_playlists
 
 APP_VERSION = "1.0.0-pro"
 
@@ -41,6 +41,160 @@ batch_control = {
     "logs": [],
 }
 batch_lock = threading.Lock()
+
+# Playlist Sync Queue System
+playlist_queue = queue.Queue()
+is_playlist_syncing = False
+playlist_sync_lock = threading.Lock()
+
+def playlist_sync_worker():
+    global is_playlist_syncing
+    while True:
+        try:
+            playlist_id = playlist_queue.get(timeout=1.0)
+        except queue.Empty:
+            break
+            
+        if playlist_id is None:
+            playlist_queue.task_done()
+            break
+            
+        try:
+            run_playlist_sync(playlist_id)
+        except Exception as e:
+            print(f"Error syncing playlist {playlist_id}: {e}")
+        playlist_queue.task_done()
+        
+    with playlist_sync_lock:
+        is_playlist_syncing = False
+
+def start_playlist_sync_worker():
+    global is_playlist_syncing
+    with playlist_sync_lock:
+        if not is_playlist_syncing:
+            is_playlist_syncing = True
+            threading.Thread(target=playlist_sync_worker, daemon=True).start()
+
+def run_playlist_sync(playlist_id):
+    playlists = load_playlists()
+    target_pl = None
+    for pl in playlists:
+        if pl["id"] == playlist_id:
+            target_pl = pl
+            break
+            
+    if not target_pl:
+        return
+        
+    # Update status to syncing
+    for pl in playlists:
+        if pl["id"] == playlist_id:
+            pl["status"] = "syncing"
+    save_playlists(playlists)
+    
+    progress_queue.put({'type': 'playlist_sync_status', 'id': playlist_id, 'status': 'syncing', 'message': 'Starting sync...'})
+    
+    event = threading.Event()
+    
+    def c_prog(d):
+        if d['status'] == 'downloading':
+            total = d.get('total_bytes') or d.get('total_bytes_estimate', 1)
+            dl = d.get('downloaded_bytes', 0)
+            percent = (dl / total) * 100 if total else 0
+            
+            pl_index = d.get('playlist_index')
+            pl_count = d.get('playlist_count')
+            video_title = d.get('info_dict', {}).get('title', 'Video')
+            
+            msg = f"Downloading: {video_title}"
+            if pl_index and pl_count:
+                msg = f"Downloading {pl_index}/{pl_count}: {video_title}"
+                
+            progress_queue.put({
+                'type': 'playlist_sync_progress',
+                'id': playlist_id,
+                'percent': f"{percent:.1f}%",
+                'message': msg,
+                'playlist_index': pl_index,
+                'playlist_count': pl_count
+            })
+            
+    def c_succ(filepath, info):
+        progress_queue.put({
+            'type': 'playlist_sync_item_success',
+            'id': playlist_id,
+            'title': info.get('title', 'Video')
+        })
+        
+    def c_err(msg):
+        progress_queue.put({
+            'type': 'playlist_sync_item_error',
+            'id': playlist_id,
+            'message': msg
+        })
+        
+    sync_dl = VeloDownloader(on_progress=c_prog, on_success=c_succ, on_error=c_err)
+    
+    def on_sync_finished(filepath, info):
+        # Scan archive file to count downloaded files
+        folder = Path(target_pl["download_folder"])
+        archive_file = folder / "velo_archive.txt"
+        dl_count = 0
+        if archive_file.exists():
+            try:
+                dl_count = len(archive_file.read_text(encoding='utf-8').splitlines())
+            except Exception:
+                pass
+                
+        current_playlists = load_playlists()
+        for pl in current_playlists:
+            if pl["id"] == playlist_id:
+                pl["status"] = "idle"
+                pl["last_sync"] = datetime.now().isoformat(timespec="seconds")
+                pl["downloaded_count"] = dl_count
+                pl["total_count"] = info.get('playlist_count') or len(info.get('entries', [])) or pl["total_count"]
+                break
+        save_playlists(current_playlists)
+        
+        progress_queue.put({
+            'type': 'playlist_sync_success',
+            'id': playlist_id,
+            'message': 'Sync complete'
+        })
+        event.set()
+        
+    def on_sync_failed(msg):
+        current_playlists = load_playlists()
+        for pl in current_playlists:
+            if pl["id"] == playlist_id:
+                pl["status"] = "error"
+                break
+        save_playlists(current_playlists)
+        
+        progress_queue.put({
+            'type': 'playlist_sync_error',
+            'id': playlist_id,
+            'message': msg
+        })
+        event.set()
+        
+    sync_dl.on_success = on_sync_finished
+    sync_dl.on_error = on_sync_failed
+    
+    sync_dl.download(
+        target_pl["url"],
+        target_pl["download_folder"],
+        format_type=target_pl["format"],
+        quality=target_pl["quality"],
+        single_video=False,
+        download_archive=True,
+        sponsorblock=target_pl["sponsorblock"],
+        embed_metadata=target_pl["embed_metadata"],
+        download_transcript=target_pl["download_transcript"],
+        playlist_items=target_pl.get("playlist_items")
+    )
+    
+    event.wait()
 
 def reset_batch_state(total):
     with batch_lock:
@@ -526,6 +680,205 @@ def api_open():
             open_file(path)
         return jsonify({"status": "opened"})
     return jsonify({"error": "No path"}), 400
+
+@app.route('/api/playlists', methods=['GET', 'POST', 'DELETE'])
+def api_playlists():
+    if request.method == 'GET':
+        playlists = load_playlists()
+        for pl in playlists:
+            folder = Path(pl.get("download_folder", ""))
+            archive_file = folder / "velo_archive.txt"
+            if archive_file.exists():
+                try:
+                    pl["downloaded_count"] = len(archive_file.read_text(encoding='utf-8').splitlines())
+                except Exception:
+                    pass
+        return jsonify(playlists)
+        
+    elif request.method == 'POST':
+        data = request.json
+        url = data.get('url')
+        config = data.get('config', {})
+        
+        if not url:
+            return jsonify({"error": "URL is required"}), 400
+            
+        import yt_dlp
+        ydl_opts = {
+            'quiet': True,
+            'no_warnings': True,
+            'extract_flat': 'in_playlist',
+            'skip_download': True,
+            'noplaylist': False,
+        }
+        
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+        except Exception as e:
+            return jsonify({"error": f"Failed to fetch playlist info: {str(e)}"}), 400
+            
+        is_playlist = info.get('_type') == 'playlist' or 'entries' in info
+        if not is_playlist:
+            return jsonify({"error": "Provided URL is not a playlist."}), 400
+            
+        title = info.get('title', 'Unknown Playlist')
+        uploader = info.get('uploader') or info.get('uploader_id') or 'Unknown Channel'
+        playlist_id = info.get('id') or str(hash(url))
+        entries = info.get('entries', [])
+        
+        settings = load_settings()
+        base_download_folder = settings.get('download_folder', str(Path.home() / "Downloads"))
+        
+        clean_title = "".join([c for c in title if c.isalpha() or c.isdigit() or c in ' -_']).strip()
+        playlist_folder = Path(base_download_folder) / clean_title
+        playlist_folder.mkdir(parents=True, exist_ok=True)
+        
+        playlists = load_playlists()
+        for pl in playlists:
+            if pl["id"] == playlist_id:
+                return jsonify({"error": "Playlist is already installed"}), 400
+                
+        downloaded_count = 0
+        archive_file = playlist_folder / "velo_archive.txt"
+        if archive_file.exists():
+            try:
+                downloaded_count = len(archive_file.read_text(encoding='utf-8').splitlines())
+            except Exception:
+                pass
+                
+        new_playlist = {
+            "id": playlist_id,
+            "url": url,
+            "title": title,
+            "uploader": uploader,
+            "download_folder": str(playlist_folder),
+            "format": config.get("format", "video"),
+            "quality": config.get("quality", "best"),
+            "download_transcript": config.get("download_transcript", False),
+            "sponsorblock": config.get("sponsorblock", False),
+            "embed_metadata": config.get("embed_metadata", False),
+            "download_archive": True,
+            "playlist_items": config.get("playlist_items"),
+            "last_sync": "Never",
+            "status": "idle",
+            "total_count": len(config.get("playlist_items").split(",")) if config.get("playlist_items") else len(entries),
+            "downloaded_count": downloaded_count
+        }
+        
+        playlists.append(new_playlist)
+        save_playlists(playlists)
+        
+        return jsonify({"status": "installed", "playlist": new_playlist})
+        
+    elif request.method == 'DELETE':
+        data = request.json
+        playlist_id = data.get('id')
+        delete_files = data.get('delete_files', False)
+        
+        if not playlist_id:
+            return jsonify({"error": "Playlist ID is required"}), 400
+            
+        playlists = load_playlists()
+        target_pl = None
+        for pl in playlists:
+            if pl["id"] == playlist_id:
+                target_pl = pl
+                break
+                
+        if not target_pl:
+            return jsonify({"error": "Playlist not found"}), 404
+            
+        if delete_files:
+            import shutil
+            folder_path = Path(target_pl["download_folder"])
+            if folder_path.exists() and folder_path.is_dir():
+                try:
+                    shutil.rmtree(folder_path)
+                except Exception as e:
+                    print(f"Error deleting playlist files: {e}")
+                    
+        playlists = [pl for pl in playlists if pl["id"] != playlist_id]
+        save_playlists(playlists)
+        
+        return jsonify({"status": "uninstalled"})
+
+@app.route('/api/playlists/preview', methods=['POST'])
+def api_playlists_preview():
+    data = request.json or {}
+    url = data.get('url')
+    if not url:
+        return jsonify({"error": "URL is required"}), 400
+        
+    import yt_dlp
+    ydl_opts = {
+        'extract_flat': True,
+        'skip_download': True,
+        'quiet': True,
+        'no_warnings': True,
+    }
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            
+        if not info or ('entries' not in info and info.get('_type') != 'playlist'):
+            return jsonify({"error": "Provided URL is not a playlist."}), 400
+            
+        entries = info.get('entries', [])
+        preview_entries = []
+        for idx, entry in enumerate(entries):
+            preview_entries.append({
+                "index": idx + 1,
+                "title": entry.get('title') or f"Video {idx + 1}",
+                "id": entry.get('id') or "",
+                "uploader": entry.get('uploader') or ""
+            })
+            
+        return jsonify({
+            "title": info.get('title') or "YouTube Playlist",
+            "uploader": info.get('uploader') or "Unknown Channel",
+            "entries": preview_entries
+        })
+    except Exception as e:
+        return jsonify({"error": f"Failed to load playlist preview: {str(e)}"}), 500
+
+@app.route('/api/playlists/sync', methods=['POST'])
+def api_playlists_sync():
+    data = request.json or {}
+    playlist_id = data.get('id')
+    
+    if not playlist_id:
+        return jsonify({"error": "Playlist ID is required"}), 400
+        
+    playlists = load_playlists()
+    
+    if playlist_id == "all":
+        added_count = 0
+        for pl in playlists:
+            if pl["status"] not in ["syncing"]:
+                playlist_queue.put(pl["id"])
+                added_count += 1
+        
+        if added_count > 0:
+            start_playlist_sync_worker()
+        return jsonify({"status": "queued", "count": added_count})
+        
+    target_pl = None
+    for pl in playlists:
+        if pl["id"] == playlist_id:
+            target_pl = pl
+            break
+            
+    if not target_pl:
+        return jsonify({"error": "Playlist not found"}), 404
+        
+    if target_pl["status"] == "syncing":
+        return jsonify({"error": "Playlist is already syncing"}), 400
+        
+    playlist_queue.put(playlist_id)
+    start_playlist_sync_worker()
+    
+    return jsonify({"status": "sync queued", "id": playlist_id})
 
 @app.route('/stream')
 def stream():
