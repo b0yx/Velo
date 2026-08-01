@@ -2,5 +2,3 @@ customtkinter>=5.2.0
 yt-dlp>=2023.10.13
 Pillow>=10.0.0
 Flask>=3.0.0
-flask-cors>=4.0.0
-pytest>=8.0.0

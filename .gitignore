@@ -5,12 +5,15 @@ __pycache__/
 venv/
 .venv/
 env/
+velo_env/
 .env/
 
 # Project Specific
 settings.json
 history.json
 Downloads/
+velo.log*
+velo_jobs.sqlite3*
 
 # IDEs
 .vscode/

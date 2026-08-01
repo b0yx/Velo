@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Velo - Media Workspace</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -360,17 +361,176 @@
         .animate-float {
             animation: float 3s ease-in-out infinite;
         }
+
+        /* Product workspace: compact, neutral, information-first. */
+        :root {
+            --bg: #f3f4f6;
+            --bg-elevated: #ffffff;
+            --panel: #ffffff;
+            --panel-strong: #ffffff;
+            --text: #18181b;
+            --muted: #71717a;
+            --line: #e4e4e7;
+            --accent: #6d5dfc;
+            --accent-2: #6d5dfc;
+            --accent-soft: #eeecff;
+            --success: #15803d;
+            --danger: #dc2626;
+            --shadow: 0 1px 2px rgba(0,0,0,.04);
+        }
+        .dark {
+            --bg: #111113;
+            --bg-elevated: #19191c;
+            --panel: #19191c;
+            --panel-strong: #202024;
+            --text: #f4f4f5;
+            --muted: #a1a1aa;
+            --line: #2e2e33;
+            --accent: #8b7cff;
+            --accent-2: #8b7cff;
+            --accent-soft: rgba(139,124,255,.14);
+            --success: #4ade80;
+            --danger: #fb7185;
+            --shadow: 0 1px 2px rgba(0,0,0,.25);
+        }
+        [x-cloak] { display: none !important; }
+        html, body { height: 100%; overflow: hidden; }
+        body {
+            background: var(--bg);
+            font-size: 14px;
+            line-height: 1.45;
+        }
+        button, input, select, textarea { font: inherit; }
+        button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+            outline: 2px solid var(--accent) !important;
+            outline-offset: 2px;
+        }
+        .skip-link { position: fixed; z-index: 100; top: 8px; left: 8px; transform: translateY(-150%); background: var(--text); color: var(--bg); padding: 8px 12px; border-radius: 6px; }
+        .skip-link:focus { transform: none; }
+        .product-frame, .app-shell, .product-layout { height: 100vh; }
+        .app-shell { background: var(--bg); }
+        .product-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); }
+        .product-sidebar {
+            min-width: 0; overflow-y: auto; padding: 16px 12px; border-inline-end: 1px solid var(--line); background: color-mix(in srgb, var(--bg-elevated) 65%, var(--bg));
+        }
+        .product-sidebar > .flex:first-child { margin: 0 8px 20px; }
+        .product-mark { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; background: var(--accent); flex: none; }
+        .product-mark img { width: 20px; height: 20px; }
+        .product-sidebar .title-display { font-size: 16px !important; }
+        .product-sidebar .title-display + div { display: none; }
+        .product-sidebar nav { display: grid; gap: 2px; }
+        .product-sidebar nav button { border-radius: 6px !important; padding: 7px 8px !important; min-height: 36px; }
+        .product-sidebar nav button > div:first-child { gap: 10px !important; }
+        .product-sidebar nav button > div:first-child > div:first-child { width: 24px !important; height: 24px !important; border-radius: 5px !important; background: transparent !important; }
+        .product-sidebar nav button .font-bold { font-weight: 600; font-size: 13px; }
+        .product-sidebar nav button .font-bold + div { display: none; }
+        .nav-item-active { background: var(--accent-soft); border: 0; color: var(--accent); }
+        .nav-item-idle:hover { transform: none; background: color-mix(in srgb, var(--text) 5%, transparent); }
+        .product-sidebar > .pt-6 { margin-top: 20px !important; padding: 16px 8px 0 !important; }
+        .product-sidebar > .pt-6 > .flex { display: grid; gap: 8px; }
+        .product-sidebar > .pt-6 > .flex .btn-secondary { width: 100%; justify-content: center; }
+        .product-sidebar > .text-xs:last-child { padding: 0 8px; }
+        .product-main { min-width: 0; overflow-y: auto; background: var(--bg-elevated); }
+        .workspace-canvas { width: 100%; min-height: 100%; padding: 0 24px 40px; }
+        .product-toolbar { position: sticky; top: 0; z-index: 20; margin: 0 -24px 20px; padding: 13px 24px; min-height: 66px; background: color-mix(in srgb, var(--bg-elevated) 92%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+        .product-toolbar > div { flex-direction: row !important; align-items: center !important; justify-content: space-between !important; gap: 16px !important; }
+        .toolbar-eyebrow { color: var(--muted); font-size: 11px; font-weight: 600; }
+        .toolbar-title { color: var(--text); background: none; -webkit-text-fill-color: currentColor; animation: none; font-family: inherit; font-size: 18px; line-height: 1.25; letter-spacing: -.015em; }
+        .toolbar-description { display: none; }
+        .toolbar-actions { display: flex; align-items: center; gap: 8px; }
+        .toolbar-actions > .metric-chip { padding: 6px 9px !important; border-radius: 6px; font-size: 11px; max-width: 210px; }
+        .toolbar-actions > .metric-chip > div:first-child { display: none; }
+        .command-trigger { display: flex; align-items: center; gap: 8px; padding: 6px 8px !important; }
+        kbd { border: 1px solid var(--line); background: var(--bg); color: var(--muted); border-radius: 4px; padding: 1px 5px; font-size: 10px; font-family: inherit; }
+        .glass-panel, .soft-panel, .accent-panel { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); backdrop-filter: none; }
+        .soft-panel, .glass-panel, .accent-panel { border-radius: 8px !important; }
+        .title-display { color: var(--text); background: none; -webkit-text-fill-color: currentColor; animation: none; font-family: inherit; letter-spacing: -.02em; }
+        .btn-main, .btn-secondary, .btn-danger { min-height: 34px; border-radius: 6px; padding: 7px 10px; font-weight: 600; box-shadow: none; transition: background .15s, border-color .15s, opacity .15s; }
+        .btn-main { background: var(--accent); color: #fff; }
+        .btn-main:hover:not(:disabled) { transform: none; box-shadow: none; filter: brightness(1.07); }
+        .btn-secondary { background: var(--panel-strong); border: 1px solid var(--line); }
+        .btn-secondary:hover { transform: none; background: color-mix(in srgb, var(--text) 6%, var(--panel-strong)); }
+        .btn-danger { background: transparent; padding: 7px 10px; }
+        .input-shell, .select-shell { min-height: 36px; padding: 7px 10px; border-radius: 6px; background: var(--panel-strong); }
+        .textarea-shell { padding: 10px; border-radius: 6px; background: var(--panel-strong); }
+        .input-shell:focus, .select-shell:focus, .textarea-shell:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .metric-chip { border-radius: 6px; background: var(--panel-strong); }
+        .toggle-track { width: 34px; height: 19px; flex: none; }
+        .toggle-thumb { width: 15px; height: 15px; top: 2px; left: 2px; }
+        .toggle-track.active { background: var(--accent); }
+        .toggle-track.active .toggle-thumb { transform: translateX(15px); }
+        body[dir="rtl"] .toggle-track.active .toggle-thumb { transform: translateX(-15px); }
+        body[dir="rtl"] .toggle-thumb { left: auto; right: 2px; }
+        .home-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 312px; gap: 12px; align-items: start; }
+        .home-source-grid, .home-detail-grid { display: contents; }
+        .source-panel, .preview-panel, .playlist-panel { grid-column: 1; padding: 18px !important; }
+        .quick-inspector, .advanced-inspector { grid-column: 2; padding: 16px !important; }
+        .quick-inspector { grid-row: 1; }
+        .advanced-inspector { grid-row: 2 / span 3; position: sticky; top: 86px; max-height: calc(100vh - 106px); overflow-y: auto; }
+        .preview-panel { grid-row: 2; }
+        .playlist-panel { grid-row: 3; }
+        .action-dock { grid-column: 1; grid-row: 4; padding: 14px 18px !important; position: sticky; bottom: 12px; z-index: 10; border-color: color-mix(in srgb, var(--accent) 30%, var(--line)); }
+        .source-panel .title-display { font-size: 20px !important; }
+        .source-panel .metric-chip { border: 0; background: var(--bg); }
+        .source-panel .mt-5.flex.flex-wrap { gap: 6px !important; }
+        .source-panel .mt-5.flex.flex-wrap .btn-secondary { padding: 5px 8px !important; font-size: 12px; }
+        .source-panel .grid.md\:grid-cols-3 { padding-top: 10px !important; padding-bottom: 10px !important; margin-top: 12px !important; }
+        .inspector-disclosure { width: 100%; display: flex; justify-content: space-between; align-items: center; color: var(--text); font-weight: 650; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+        .inspector-disclosure i { transition: transform .15s; }
+        .advanced-inspector label > div:first-child .font-bold { font-size: 13px; }
+        .advanced-inspector label > div:first-child .text-sm { font-size: 11px; line-height: 1.35; }
+        .preview-panel .lg\:w-\[300px\] { width: 220px !important; }
+        .preview-panel .text-3xl { font-size: 20px !important; }
+        .progress-bar { background: var(--accent); }
+        .text-white { color: var(--text) !important; }
+        section:not(.home-workspace) { max-width: 1180px; }
+        section:not(.home-workspace) > .grid, section:not(.home-workspace) > .glass-panel, section:not(.home-workspace) > .soft-panel { gap: 12px !important; }
+        section:not(.home-workspace) .glass-panel, section:not(.home-workspace) .soft-panel { padding: 18px !important; }
+        section:not(.home-workspace) .text-3xl, section:not(.home-workspace) .text-2xl { font-size: 18px !important; }
+        .command-overlay { position: fixed; inset: 0; z-index: 80; display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh; background: rgba(0,0,0,.42); }
+        .command-palette { width: min(560px, calc(100vw - 32px)); border: 1px solid var(--line); background: var(--panel-strong); border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.28); overflow: hidden; }
+        .command-search { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); color: var(--muted); }
+        .command-search input { width: 100%; background: transparent; color: var(--text); outline: 0; }
+        .command-list { padding: 6px; max-height: 360px; overflow-y: auto; }
+        .command-item { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 9px 10px; border-radius: 6px; text-align: left; }
+        .command-item:hover, .command-item:focus-visible { background: var(--accent-soft); }
+        .command-item > span { display: flex; align-items: center; gap: 10px; }
+        .command-item i { width: 18px; color: var(--muted); }
+        .command-empty { padding: 24px; text-align: center; color: var(--muted); }
+        @media (max-width: 1000px) {
+            html, body { overflow: auto; }
+            .product-frame, .app-shell, .product-layout { height: auto; min-height: 100vh; }
+            .product-layout { grid-template-columns: 1fr; }
+            .product-sidebar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+            .product-sidebar > .flex:first-child { margin: 0 8px 0 0; flex: none; }
+            .product-sidebar nav { display: flex; }
+            .product-sidebar nav button { width: auto !important; white-space: nowrap; }
+            .product-sidebar > .pt-6, .product-sidebar > .text-xs:last-child { display: none; }
+            .workspace-canvas { padding: 0 14px 32px; }
+            .product-toolbar { margin: 0 -14px 14px; padding: 10px 14px; }
+            .home-workspace { grid-template-columns: 1fr; }
+            .home-source-grid, .home-detail-grid { display: contents; }
+            .source-panel, .preview-panel, .playlist-panel, .quick-inspector, .advanced-inspector, .action-dock { grid-column: 1; grid-row: auto; position: static; max-height: none; }
+        }
+        @media (max-width: 640px) {
+            .toolbar-actions > .metric-chip, .command-trigger span, .command-trigger kbd { display: none; }
+            .product-toolbar > div { flex-direction: row !important; }
+            .source-panel, .preview-panel, .playlist-panel { padding: 14px !important; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+        }
     </style>
 </head>
-<body x-data="app()" x-init="init()" :class="{ 'dark': isDark }" :dir="language === 'ar' ? 'rtl' : 'ltr'" :lang="language">
-    <div class="min-h-screen p-3 md:p-5">
-        <div class="app-shell glass-panel min-h-[calc(100vh-1.5rem)] rounded-[2rem] overflow-hidden">
-            <div class="grid min-h-[calc(100vh-1.5rem)] lg:grid-cols-[290px_minmax(0,1fr)]">
-                <aside class="border-b lg:border-b-0 lg:border-r p-5 md:p-6" style="border-color: var(--line);">
+<body x-data="app()" x-init="init()" @keydown.window="handleGlobalKeydown($event)" :class="{ 'dark': isDark }" :dir="language === 'ar' ? 'rtl' : 'ltr'" :lang="language">
+    <a href="#workspace" class="skip-link">Skip to workspace</a>
+    <div class="product-frame">
+        <div class="app-shell">
+            <div class="product-layout">
+                <aside class="product-sidebar" aria-label="Primary navigation">
                     <div class="flex items-center justify-between gap-4 mb-8">
                         <div class="flex items-center gap-4">
-                            <div class="h-14 w-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-lg animate-float"
-                                 style="background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #111827;">
+                            <div class="product-mark">
                                 <!-- <i class="fa-solid fa-bolt"></i> -->
                                 <img src="/static/logo.png" class="w-8 h-8 object-contain" alt="Velo Logo">
                             </div>
@@ -386,6 +546,7 @@
                         <template x-for="tab in tabs" :key="tab.id">
                             <button
                                 @click="currentTab = tab.id"
+                                :aria-current="currentTab === tab.id ? 'page' : null"
                                 class="w-full rounded-2xl px-4 py-3 flex items-center justify-between text-left transition-all duration-200"
                                 :class="currentTab === tab.id ? 'nav-item-active' : 'nav-item-idle'">
                                 <div class="flex items-center gap-4">
@@ -436,16 +597,19 @@
                     </div>
                 </aside>
 
-                <main class="min-w-0 overflow-y-auto p-5 md:p-8 lg:p-10">
-                    <div class="max-w-6xl mx-auto">
-                        <header class="mb-8">
+                <main id="workspace" class="product-main" tabindex="-1">
+                    <div class="workspace-canvas">
+                        <header class="product-toolbar">
                             <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-5">
                                 <div>
-                                    <div class="text-xs font-bold uppercase tracking-[0.3em] mb-3" style="color: var(--muted);" x-text="t('workspace')"></div>
-                                    <h1 class="title-display text-4xl md:text-5xl font-bold leading-none" x-text="tabs.find(t => t.id === currentTab).title"></h1>
-                                    <p class="mt-3 text-base md:text-lg max-w-2xl" style="color: var(--muted);" x-text="tabs.find(t => t.id === currentTab).description"></p>
+                                    <div class="toolbar-eyebrow" x-text="tabs.find(t => t.id === currentTab).subtitle"></div>
+                                    <h1 class="title-display toolbar-title" x-text="tabs.find(t => t.id === currentTab).title"></h1>
+                                    <p class="toolbar-description" x-text="tabs.find(t => t.id === currentTab).description"></p>
                                 </div>
-                                <div class="flex flex-wrap gap-3">
+                                <div class="toolbar-actions">
+                                    <button @click="commandPaletteOpen = true; $nextTick(() => $refs.commandInput?.focus())" class="btn-secondary command-trigger" aria-label="Open command palette">
+                                        <i class="fa-solid fa-magnifying-glass"></i><span>Commands</span><kbd>⌘K</kbd>
+                                    </button>
                                     <div class="metric-chip px-4 py-3 text-sm">
                                         <div class="font-semibold" x-text="t('folder')"></div>
                                         <div class="truncate max-w-[220px]" style="color: var(--muted);" x-text="serverSettings.download_folder || t('notSet')"></div>
@@ -458,9 +622,9 @@
                             </div>
                         </header>
 
-                        <section x-show="currentTab === 'home'" x-transition.opacity.duration.300ms class="space-y-6">
-                            <div class="grid xl:grid-cols-[minmax(0,1.4fr)_360px] gap-6">
-                                <div class="soft-panel rounded-[1.75rem] p-5 md:p-7">
+                        <section x-show="currentTab === 'home'" x-transition.opacity.duration.150ms class="home-workspace">
+                            <div class="home-source-grid">
+                                <div class="soft-panel source-panel">
                                     <div class="flex items-start justify-between gap-4 mb-5">
                                         <div>
                                             <div class="text-xs font-bold uppercase tracking-[0.25em]" style="color: var(--muted);" x-text="t('primaryDownload')"></div>
@@ -472,7 +636,7 @@
                                     </div>
 
                                     <div class="grid lg:grid-cols-[minmax(0,1fr)_auto_auto] gap-3">
-                                        <input type="text" x-model="url" :placeholder="t('urlPlaceholder')" class="input-shell">
+                                        <input type="url" x-ref="urlInput" x-model="url" @keydown.enter="fetchInfo()" :placeholder="t('urlPlaceholder')" class="input-shell" aria-label="Media URL">
                                         <button @click="pasteUrl()" class="btn-secondary"><i class="fa-regular fa-paste mr-2"></i><span x-text="t('paste')"></span></button>
                                         <button @click="fetchInfo()" :disabled="isFetching || !url" class="btn-main">
                                             <i class="fa-solid" :class="isFetching ? 'fa-spinner fa-spin' : 'fa-wand-magic-sparkles'"></i>
@@ -545,13 +709,14 @@
                                                 <div class="metric-chip px-3 py-2 text-sm">
                                                     <div class="font-bold" x-text="item.height ? item.height + 'p' : (item.format_note || item.ext || 'media')"></div>
                                                     <div style="color: var(--muted);" x-text="formatBytes(item.filesize)"></div>
+                                                    <div class="text-xs mt-1 truncate opacity-70" x-text="[item.vcodec && item.vcodec !== 'none' ? item.vcodec : '', item.acodec && item.acodec !== 'none' ? item.acodec : '', item.fps ? item.fps + 'fps' : '', item.dynamic_range].filter(Boolean).join(' · ')"></div>
                                                 </div>
                                             </template>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="glass-panel rounded-[1.75rem] p-5 md:p-6">
+                                <div class="glass-panel quick-inspector">
                                     <div class="text-xs font-bold uppercase tracking-[0.25em]" style="color: var(--muted);" x-text="t('quickSettings')"></div>
                                     <div class="space-y-4 mt-5">
                                         <div>
@@ -591,8 +756,8 @@
                                 </div>
                             </div>
 
-                            <div class="grid xl:grid-cols-[minmax(0,1.3fr)_minmax(280px,0.7fr)] gap-6">
-                                <div class="soft-panel rounded-[1.75rem] p-5 md:p-7" x-show="videoInfo" x-transition.opacity>
+                            <div class="home-detail-grid">
+                                <div class="soft-panel preview-panel" x-show="videoInfo" x-transition.opacity>
                                     <div class="flex flex-col lg:flex-row gap-6">
                                         <div class="w-full lg:w-[300px] shrink-0">
                                             <div class="aspect-video rounded-[1.35rem] overflow-hidden soft-panel">
@@ -617,9 +782,11 @@
                                     </div>
                                 </div>
 
-                                <div class="soft-panel rounded-[1.75rem] p-5 md:p-6">
-                                    <div class="text-xs font-bold uppercase tracking-[0.25em]" style="color: var(--muted);" x-text="t('powerFeatures')"></div>
-                                    <div class="space-y-4 mt-5">
+                                <div class="soft-panel advanced-inspector">
+                                    <button @click="advancedOpen = !advancedOpen" class="inspector-disclosure" :aria-expanded="advancedOpen">
+                                        <span x-text="t('powerFeatures')"></span><i class="fa-solid fa-chevron-down" :class="advancedOpen ? 'rotate-180' : ''"></i>
+                                    </button>
+                                    <div class="space-y-4 mt-5" x-show="advancedOpen">
                                         <label class="flex items-start justify-between gap-4 cursor-pointer">
                                             <div>
                                                 <div class="font-bold">SponsorBlock</div>
@@ -653,6 +820,77 @@
                                             </div>
                                         </label>
 
+                                        <div class="pt-4 border-t" style="border-color: var(--line);" x-show="settings.format === 'video'">
+                                            <label class="flex items-start justify-between gap-4 cursor-pointer">
+                                                <div>
+                                                    <div class="font-bold" x-text="t('subtitles')"></div>
+                                                    <div class="text-sm mt-1" style="color: var(--muted);" x-text="t('subtitlesDesc')"></div>
+                                                </div>
+                                                <div class="toggle-track" :class="settings.download_subtitles ? 'active' : ''">
+                                                    <div class="toggle-thumb"></div>
+                                                    <input type="checkbox" x-model="settings.download_subtitles" @change="ensureSubtitleLanguage()" class="hidden">
+                                                </div>
+                                            </label>
+
+                                            <div x-show="settings.download_subtitles" x-transition class="mt-4 space-y-4">
+                                                <div>
+                                                    <div class="text-xs font-bold uppercase tracking-[0.18em] mb-2" style="color: var(--muted);" x-text="t('subtitleLanguages')"></div>
+                                                    <div class="flex flex-wrap gap-2 max-h-44 overflow-y-auto">
+                                                        <template x-for="track in availableSubtitleLanguages" :key="track.code">
+                                                            <label class="metric-chip px-3 py-2 text-sm cursor-pointer" :style="settings.subtitle_languages.includes(track.code) ? 'border-color: var(--accent); color: var(--accent);' : ''">
+                                                                <input type="checkbox" :value="track.code" x-model="settings.subtitle_languages" class="mr-2">
+                                                                <span x-text="track.name"></span>
+                                                                <span class="ml-1 text-xs opacity-60" x-text="`(${track.code})`"></span>
+                                                                <span class="ml-1 text-[10px] uppercase opacity-50" x-show="videoInfo" x-text="track.automatic ? 'auto' : 'manual'"></span>
+                                                            </label>
+                                                        </template>
+                                                    </div>
+                                                    <div class="text-xs mt-2" style="color: var(--muted);" x-show="!videoInfo" x-text="t('fetchForLanguages')"></div>
+                                                </div>
+
+                                                <div class="grid sm:grid-cols-2 gap-3">
+                                                    <div>
+                                                        <label class="text-xs font-bold block mb-2">Subtitle source</label>
+                                                        <select x-model="settings.subtitle_source" class="select-shell !py-2.5">
+                                                            <option value="prefer_manual">Manual, then automatic</option>
+                                                            <option value="manual">Manual only</option>
+                                                            <option value="auto">Automatic only</option>
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label class="text-xs font-bold block mb-2">Sidecar format</label>
+                                                        <select x-model="settings.subtitle_format" class="select-shell !py-2.5">
+                                                            <option value="vtt">WebVTT</option>
+                                                            <option value="srt">SRT</option>
+                                                            <option value="best">Source format</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <label class="flex items-center justify-between gap-4 cursor-pointer">
+                                                    <div>
+                                                        <div class="font-bold text-sm" x-text="t('embedSubtitles')"></div>
+                                                        <div class="text-xs mt-1" style="color: var(--muted);" x-text="t('embedSubtitlesDesc')"></div>
+                                                    </div>
+                                                    <div class="toggle-track" :class="settings.embed_subtitles ? 'active' : ''">
+                                                        <div class="toggle-thumb"></div>
+                                                        <input type="checkbox" x-model="settings.embed_subtitles" class="hidden">
+                                                    </div>
+                                                </label>
+
+                                                <label class="flex items-center justify-between gap-4 cursor-pointer">
+                                                    <div>
+                                                        <div class="font-bold text-sm">Burn first language into video</div>
+                                                        <div class="text-xs mt-1" style="color: var(--muted);">Always-visible captions; re-encodes video and takes longer.</div>
+                                                    </div>
+                                                    <div class="toggle-track" :class="settings.burn_subtitles ? 'active' : ''">
+                                                        <div class="toggle-thumb"></div>
+                                                        <input type="checkbox" x-model="settings.burn_subtitles" class="hidden">
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+
                                         <label class="flex items-start justify-between gap-4 cursor-pointer">
                                             <div>
                                                 <div class="font-bold">Smart Sync</div>
@@ -678,7 +916,66 @@
                                 </div>
                             </div>
 
-                            <div class="glass-panel rounded-[1.75rem] p-5 md:p-7" x-show="videoInfo" x-transition.opacity>
+                            <div class="glass-panel playlist-panel" x-show="playlistItems.length" x-transition.opacity>
+                                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
+                                    <div>
+                                        <div class="text-xs font-bold uppercase tracking-[0.25em]" style="color: var(--muted);">Playlist Checklist</div>
+                                        <h3 class="title-display text-2xl font-bold mt-2">Choose episodes and track every download</h3>
+                                        <p class="text-sm mt-2" style="color: var(--muted);">
+                                            <span x-text="playlistCompletedCount"></span> completed ·
+                                            <span x-text="playlistSelectedCount"></span> selected ·
+                                            <span x-text="playlistItems.length"></span> total
+                                        </p>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button @click="selectAllPlaylistItems(true)" class="btn-secondary !py-2.5 text-sm"><i class="fa-solid fa-check-double mr-2"></i>Select All</button>
+                                        <button @click="selectPendingPlaylistItems()" class="btn-secondary !py-2.5 text-sm"><i class="fa-regular fa-square-check mr-2"></i>Pending Only</button>
+                                        <button @click="selectAllPlaylistItems(false)" class="btn-secondary !py-2.5 text-sm">Clear</button>
+                                        <button @click="resetPlaylistProgress()" class="btn-secondary !py-2.5 text-sm"><i class="fa-solid fa-arrow-rotate-left mr-2"></i>Reset Status</button>
+                                    </div>
+                                </div>
+
+                                <div class="mb-5">
+                                    <div class="flex justify-between text-sm mb-2">
+                                        <span class="font-semibold">Playlist completion</span>
+                                        <span style="color: var(--muted);" x-text="playlistCompletionPercent + '%' "></span>
+                                    </div>
+                                    <div class="progress-rail h-3">
+                                        <div class="progress-bar h-full transition-all duration-300" :style="`width: ${playlistCompletionPercent}%`"></div>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2 max-h-[520px] overflow-y-auto pr-1">
+                                    <template x-for="item in playlistItems" :key="item.id || item.index">
+                                        <div class="soft-panel rounded-2xl p-3 md:p-4 flex items-center gap-3"
+                                             :style="['completed', 'skipped'].includes(item.status) ? 'border-color: rgba(15,157,122,0.35);' : ''">
+                                            <input type="checkbox" x-model="item.selected" @change="savePlaylistChecklist()"
+                                                   :disabled="item.status === 'downloading' || item.status === 'processing'"
+                                                   class="h-5 w-5 shrink-0 accent-orange-500">
+                                            <div class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
+                                                 :style="['completed', 'skipped'].includes(item.status) ? 'background: rgba(15,157,122,0.14); color: var(--success);' : (item.status === 'failed' ? 'background: rgba(220,38,38,0.12); color: var(--danger);' : 'background: var(--accent-soft); color: var(--accent);')">
+                                                <i class="fa-solid"
+                                                   :class="['completed', 'skipped'].includes(item.status) ? 'fa-check' : (item.status === 'downloading' ? 'fa-arrow-down fa-bounce' : (item.status === 'processing' ? 'fa-spinner fa-spin' : (item.status === 'failed' ? 'fa-xmark' : 'fa-list-check')))"></i>
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <div class="flex items-center justify-between gap-3">
+                                                    <div class="font-semibold truncate"><span class="opacity-50 mr-2" x-text="String(item.index).padStart(2, '0')"></span><span x-text="item.title"></span></div>
+                                                    <span class="metric-chip px-2.5 py-1 text-[11px] uppercase font-bold shrink-0" x-text="item.status"></span>
+                                                </div>
+                                                <div class="flex items-center gap-3 text-xs mt-1" style="color: var(--muted);">
+                                                    <span x-show="item.duration" x-text="formatTime(item.duration)"></span>
+                                                    <span x-show="item.filepath" class="truncate" x-text="item.filepath"></span>
+                                                </div>
+                                                <div class="progress-rail h-1.5 mt-2" x-show="item.status === 'downloading' || item.status === 'processing'">
+                                                    <div class="progress-bar h-full transition-all duration-300" :style="`width: ${item.progress || 0}%`"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="glass-panel action-dock" x-show="videoInfo" x-transition.opacity>
                                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
                                     <div>
                                         <div class="text-xs font-bold uppercase tracking-[0.25em]" style="color: var(--muted);" x-text="t('processing')"></div>
@@ -706,7 +1003,7 @@
 
                                 <div class="grid md:grid-cols-[minmax(0,1fr)_auto_auto_auto] gap-3">
                                     <button @click="startDownload()" x-show="downloadStatus === 'idle' || downloadStatus === 'error' || downloadStatus === 'success'" class="btn-main">
-                                        <i class="fa-solid fa-download mr-2"></i><span x-text="t('startDownload')"></span>
+                                        <i class="fa-solid fa-download mr-2"></i><span x-text="playlistItems.length ? `Download ${playlistActionableCount} selected` : t('startDownload')"></span>
                                     </button>
                                     <button @click="cancelDownload()" x-show="downloadStatus === 'downloading' || downloadStatus === 'processing'" class="btn-danger">
                                         <i class="fa-solid fa-ban mr-2"></i><span x-text="t('cancel')"></span>
@@ -781,6 +1078,26 @@
                                             </select>
                                         </div>
 
+                                        <label class="flex items-center justify-between gap-4 cursor-pointer" x-show="settings.format === 'video'">
+                                            <div>
+                                                <div class="font-bold text-sm" x-text="t('subtitles')"></div>
+                                                <div class="text-xs" style="color: var(--muted);" x-text="settings.subtitle_languages.join(', ') || t('subtitleLanguages')"></div>
+                                            </div>
+                                            <div class="toggle-track" :class="settings.download_subtitles ? 'active' : ''">
+                                                <div class="toggle-thumb"></div>
+                                                <input type="checkbox" x-model="settings.download_subtitles" @change="ensureSubtitleLanguage()" class="hidden">
+                                            </div>
+                                        </label>
+
+                                        <div x-show="settings.download_subtitles && settings.format === 'video'" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                                            <template x-for="track in commonSubtitleLanguages" :key="'batch-' + track.code">
+                                                <label class="metric-chip px-2.5 py-1.5 text-xs cursor-pointer" :style="settings.subtitle_languages.includes(track.code) ? 'border-color: var(--accent); color: var(--accent);' : ''">
+                                                    <input type="checkbox" :value="track.code" x-model="settings.subtitle_languages" class="mr-1">
+                                                    <span x-text="track.name"></span>
+                                                </label>
+                                            </template>
+                                        </div>
+
                                         <label class="flex items-center justify-between gap-4 cursor-pointer mt-2">
                                             <div>
                                                 <div class="font-bold text-sm">Smart Sync</div>
@@ -825,7 +1142,7 @@
                                 </div>
                             </div>
 
-                            <div class="glass-panel rounded-[1.75rem] p-5 md:p-7" x-show="batch.status !== 'idle' || batch.logs.length" x-transition.opacity>
+                            <div class="glass-panel rounded-[1.75rem] p-5 md:p-7" x-show="batch.status !== 'idle' || batch.logs.length || batchState.jobs?.length" x-transition.opacity>
                                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
                                     <div>
                                         <div class="text-xs font-bold uppercase tracking-[0.25em]" style="color: var(--muted);">Queue Progress</div>
@@ -879,6 +1196,15 @@
                                                  :style="log.type === 'success' ? 'background: rgba(15,157,122,0.14); color: var(--success);' : 'background: rgba(220,38,38,0.12); color: var(--danger);'">
                                                 <i class="fa-solid" :class="log.type === 'success' ? 'fa-check' : 'fa-xmark'"></i>
                                             </div>
+                                        </div>
+                                    </template>
+                                    <template x-for="job in (batchState.jobs || []).slice(0, 20)" :key="'persisted-' + job.id">
+                                        <div class="soft-panel rounded-2xl px-4 py-3 flex items-center justify-between gap-4">
+                                            <div class="min-w-0 flex-1">
+                                                <div class="font-semibold truncate" x-text="job.url"></div>
+                                                <div class="text-xs mt-1" style="color: var(--muted);" x-text="job.error || job.filepath || `${Math.round(job.progress || 0)}%`"></div>
+                                            </div>
+                                            <span class="metric-chip px-3 py-1.5 text-xs font-bold uppercase" x-text="job.status"></span>
                                         </div>
                                     </template>
                                 </div>
@@ -1105,6 +1431,9 @@
                                         <button @click="copyText(item.filepath, 'Path copied')" class="btn-secondary">
                                             <i class="fa-regular fa-copy mr-2"></i>Copy Path
                                         </button>
+                                        <button @click="verifyFile(item)" class="btn-secondary">
+                                            <i class="fa-solid fa-shield-halved mr-2"></i>Verify
+                                        </button>
                                     </div>
                                 </div>
                             </template>
@@ -1126,6 +1455,36 @@
                                         <p class="text-sm mt-3" style="color: var(--muted);">
                                             All downloads, clips, and batch outputs are stored here.
                                         </p>
+
+                                        <div class="grid md:grid-cols-2 gap-4 mt-6 pt-6 border-t" style="border-color: var(--line);">
+                                            <div>
+                                                <label class="text-sm font-bold block mb-2">Browser authentication</label>
+                                                <select x-model="settings.browser_cookie_source" class="select-shell">
+                                                    <option value="none">None</option>
+                                                    <option value="firefox">Firefox</option>
+                                                    <option value="chrome">Google Chrome</option>
+                                                    <option value="chromium">Chromium</option>
+                                                    <option value="brave">Brave</option>
+                                                    <option value="edge">Microsoft Edge</option>
+                                                </select>
+                                                <p class="text-xs mt-2" style="color: var(--muted);">Uses the local browser cookie store. Cookie values are never written to Velo logs.</p>
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-bold block mb-2">Browser profile <span class="font-normal" style="color: var(--muted);">(optional)</span></label>
+                                                <input type="text" x-model="settings.browser_profile" placeholder="Default" class="input-shell" :disabled="settings.browser_cookie_source === 'none'">
+                                            </div>
+                                        </div>
+
+                                        <div class="grid sm:grid-cols-2 gap-4 mt-5">
+                                            <label class="flex items-center justify-between gap-3 cursor-pointer soft-panel rounded-2xl p-4">
+                                                <div><div class="font-bold text-sm">Organize playlists</div><div class="text-xs mt-1" style="color: var(--muted);">Playlist folder and numbered episodes</div></div>
+                                                <input type="checkbox" x-model="settings.organize_playlists">
+                                            </label>
+                                            <label class="flex items-center justify-between gap-3 cursor-pointer soft-panel rounded-2xl p-4">
+                                                <div><div class="font-bold text-sm">Include video ID</div><div class="text-xs mt-1" style="color: var(--muted);">Prevents title collisions</div></div>
+                                                <input type="checkbox" x-model="settings.include_video_id">
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -1161,6 +1520,54 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="grid xl:grid-cols-2 gap-6">
+                                <div class="soft-panel rounded-[1.75rem] p-5 md:p-7">
+                                    <div class="flex items-start justify-between gap-4">
+                                        <div>
+                                            <div class="text-xs font-bold uppercase tracking-[0.25em]" style="color: var(--muted);">Health Center</div>
+                                            <h3 class="title-display text-2xl font-bold mt-2">Runtime diagnostics</h3>
+                                        </div>
+                                        <button @click="fetchDiagnostics()" class="btn-secondary !py-2.5"><i class="fa-solid fa-stethoscope mr-2"></i>Run Check</button>
+                                    </div>
+                                    <div class="grid sm:grid-cols-2 gap-3 mt-5" x-show="diagnostics">
+                                        <div class="metric-chip p-3"><div class="text-xs" style="color: var(--muted);">yt-dlp</div><div class="font-bold mt-1" x-text="diagnostics?.yt_dlp_version"></div></div>
+                                        <div class="metric-chip p-3"><div class="text-xs" style="color: var(--muted);">FFmpeg</div><div class="font-bold mt-1 truncate" x-text="diagnostics?.ffmpeg?.available ? 'Available' : 'Missing'"></div></div>
+                                        <div class="metric-chip p-3"><div class="text-xs" style="color: var(--muted);">Free disk space</div><div class="font-bold mt-1" x-text="formatBytes(diagnostics?.disk?.free || 0)"></div></div>
+                                        <div class="metric-chip p-3"><div class="text-xs" style="color: var(--muted);">Output folder</div><div class="font-bold mt-1" x-text="diagnostics?.folder_writable ? 'Writable' : 'Needs attention'"></div></div>
+                                    </div>
+                                </div>
+
+                                <div class="soft-panel rounded-[1.75rem] p-5 md:p-7">
+                                    <div class="flex items-start justify-between gap-4">
+                                        <div>
+                                            <div class="text-xs font-bold uppercase tracking-[0.25em]" style="color: var(--muted);">Recovery</div>
+                                            <h3 class="title-display text-2xl font-bold mt-2">Incomplete downloads</h3>
+                                        </div>
+                                        <button @click="fetchRecovery()" class="btn-secondary !py-2.5"><i class="fa-solid fa-rotate mr-2"></i>Refresh</button>
+                                    </div>
+                                    <div class="space-y-2 mt-5 max-h-56 overflow-y-auto" x-show="incompleteDownloads.length">
+                                        <template x-for="item in incompleteDownloads" :key="item.path">
+                                            <div class="metric-chip p-3 flex items-center justify-between gap-3">
+                                                <div class="min-w-0"><div class="font-semibold truncate" x-text="item.name"></div><div class="text-xs mt-1" style="color: var(--muted);" x-text="formatBytes(item.size)"></div></div>
+                                                <div class="flex gap-2 shrink-0">
+                                                    <button @click="openFile(item.path, true)" class="btn-secondary !p-2" title="Open folder"><i class="fa-regular fa-folder-open"></i></button>
+                                                    <button @click="removePartial(item)" class="btn-danger !p-2" title="Remove partial file"><i class="fa-regular fa-trash-can"></i></button>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <p class="text-sm mt-5" style="color: var(--muted);" x-show="!incompleteDownloads.length">No incomplete downloads found.</p>
+                                </div>
+                            </div>
+
+                            <div class="glass-panel rounded-[1.75rem] p-5 md:p-7">
+                                <div class="flex items-start justify-between gap-4 mb-4">
+                                    <div><div class="text-xs font-bold uppercase tracking-[0.25em]" style="color: var(--muted);">Logs</div><h3 class="title-display text-2xl font-bold mt-2">Recent application activity</h3></div>
+                                    <button @click="fetchLogs()" class="btn-secondary !py-2.5"><i class="fa-solid fa-rotate mr-2"></i>Refresh</button>
+                                </div>
+                                <pre class="rounded-2xl p-4 text-xs overflow-auto max-h-72 whitespace-pre-wrap" style="background: rgba(0,0,0,0.28); color: var(--muted);" x-text="logLines.length ? logLines.join('\n') : 'No log entries yet.'"></pre>
+                            </div>
                         </section>
                     </div>
                 </main>
@@ -1168,7 +1575,26 @@
         </div>
     </div>
 
-    <div class="fixed bottom-5 right-5 z-50 transition-all duration-300"
+    <div x-cloak x-show="commandPaletteOpen" @keydown.escape.window="commandPaletteOpen = false" @click.self="commandPaletteOpen = false" class="command-overlay" role="dialog" aria-modal="true" aria-label="Command palette">
+        <div class="command-palette">
+            <div class="command-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input x-ref="commandInput" x-model="commandQuery" placeholder="Search commands…" aria-label="Search commands">
+                <kbd>Esc</kbd>
+            </div>
+            <div class="command-list">
+                <template x-for="command in filteredCommands" :key="command.id">
+                    <button @click="runCommand(command)" class="command-item">
+                        <span><i :class="command.icon"></i><span x-text="command.label"></span></span>
+                        <kbd x-text="command.shortcut || ''"></kbd>
+                    </button>
+                </template>
+                <p x-show="!filteredCommands.length" class="command-empty">No matching commands</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed bottom-5 right-5 z-50 transition-all duration-300" role="status" aria-live="polite"
          :class="toast.show ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0 pointer-events-none'">
         <div class="glass-panel rounded-2xl px-5 py-4 flex items-center gap-3 max-w-sm">
             <div class="h-11 w-11 rounded-xl flex items-center justify-center shrink-0"
@@ -1188,14 +1614,25 @@
                 isDark: true,
                 language: 'en',
                 currentTab: 'home',
+                advancedOpen: false,
+                commandPaletteOpen: false,
+                commandQuery: '',
                 url: '',
                 isFetching: false,
                 videoInfo: null,
+                playlistItems: [],
                 appMeta: { version: '' },
                 estimateStatus: 'idle',
                 estimateMessage: '',
                 estimate: { smallest: [], largest: [], known_formats: 0 },
                 availableQualities: ['best', '1080p', '720p', '480p', '360p'],
+                commonSubtitleLanguages: [
+                    { code: 'en', name: 'English' }, { code: 'ar', name: 'العربية' },
+                    { code: 'es', name: 'Español' }, { code: 'fr', name: 'Français' },
+                    { code: 'de', name: 'Deutsch' }, { code: 'pt', name: 'Português' },
+                    { code: 'hi', name: 'हिन्दी' }, { code: 'ja', name: '日本語' },
+                    { code: 'ko', name: '한국어' }, { code: 'zh-Hans', name: '中文' }
+                ],
                 networkModes: [
                     { id: 'stable', name: 'Stable connection', short: 'Stable', icon: 'fa-solid fa-shield-halved', description: 'More retries and resume-friendly chunks for weak internet.' },
                     { id: 'balanced', name: 'Balanced', short: 'Balanced', icon: 'fa-solid fa-gauge-high', description: 'Moderate fragment downloads with safe retry behavior.' },
@@ -1215,11 +1652,21 @@
                     quality: 'best',
                     single_video: true,
                     download_transcript: false,
+                    download_subtitles: false,
+                    subtitle_languages: [],
+                    subtitle_source: 'prefer_manual',
+                    subtitle_format: 'vtt',
+                    embed_subtitles: true,
+                    burn_subtitles: false,
                     sponsorblock: false,
                     embed_metadata: false,
                     network_mode: 'stable',
                     download_archive: false,
-                    night_mode: false
+                    night_mode: false,
+                    browser_cookie_source: 'none',
+                    browser_profile: '',
+                    organize_playlists: true,
+                    include_video_id: true
                 },
                 serverSettings: { download_folder: '' },
 
@@ -1237,6 +1684,9 @@
 
                 batch: { urlsRaw: '', status: 'idle', currentIndex: 0, totalCount: 0, currentUrl: '', percent: '0%', logs: [] },
                 batchState: { running: false, paused: false, completed: 0, failed: 0, queued: 0, failed_jobs: [] },
+                diagnostics: null,
+                incompleteDownloads: [],
+                logLines: [],
 
                 history: [],
                 stats: {
@@ -1345,6 +1795,12 @@
                         embedDesc: 'Write cover art and details into output files.',
                         transcript: 'Transcript markdown',
                         transcriptDesc: 'Save a readable .md transcript alongside the file.',
+                        subtitles: 'Multi-language subtitles',
+                        subtitlesDesc: 'Download one or more subtitle tracks with the video.',
+                        subtitleLanguages: 'Subtitle languages',
+                        fetchForLanguages: 'Fetch a video first to see every language offered by its source.',
+                        embedSubtitles: 'Embed in video',
+                        embedSubtitlesDesc: 'Make the selected tracks switchable inside the MP4 and keep sidecar files.',
                         processing: 'Processing',
                         startWorkflow: 'Start the download workflow',
                         currentStatus: 'Current status',
@@ -1445,6 +1901,12 @@
                         embedDesc: 'حفظ الغلاف والتفاصيل داخل الملف.',
                         transcript: 'تفريغ نصي Markdown',
                         transcriptDesc: 'حفظ ملف .md قابل للقراءة بجانب الملف.',
+                        subtitles: 'ترجمات متعددة اللغات',
+                        subtitlesDesc: 'تحميل مسار ترجمة واحد أو أكثر مع الفيديو.',
+                        subtitleLanguages: 'لغات الترجمة',
+                        fetchForLanguages: 'اجلب معلومات الفيديو أولا لرؤية جميع اللغات المتاحة.',
+                        embedSubtitles: 'تضمينها في الفيديو',
+                        embedSubtitlesDesc: 'إضافة الترجمات كمسارات قابلة للتبديل داخل MP4 مع الاحتفاظ بالملفات المنفصلة.',
                         processing: 'المعالجة',
                         startWorkflow: 'ابدأ عملية التحميل',
                         currentStatus: 'الحالة الحالية',
@@ -1464,6 +1926,48 @@
                         { id: 'history', name: this.t('history'), title: this.t('historyTitle'), subtitle: this.t('historySub'), description: this.t('historyDesc'), icon: 'fa-solid fa-clock-rotate-left' },
                         { id: 'settings', name: this.t('settings'), title: this.t('settingsTitle'), subtitle: this.t('settingsSub'), description: this.t('settingsDesc'), icon: 'fa-solid fa-sliders' }
                     ];
+                },
+
+                get commands() {
+                    return [
+                        ...this.tabs.map((tab, index) => ({ id: `tab-${tab.id}`, label: `Go to ${tab.name}`, icon: tab.icon, shortcut: `Alt+${index + 1}`, action: () => { this.currentTab = tab.id; } })),
+                        { id: 'focus-url', label: 'Focus media URL', icon: 'fa-solid fa-link', shortcut: '/', action: () => { this.currentTab = 'home'; this.$nextTick(() => this.$refs.urlInput?.focus()); } },
+                        { id: 'analyze', label: 'Analyze current link', icon: 'fa-solid fa-wand-magic-sparkles', shortcut: 'Enter', action: () => this.fetchInfo() },
+                        { id: 'theme', label: this.isDark ? 'Use light appearance' : 'Use dark appearance', icon: this.isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon', action: () => { this.isDark = !this.isDark; this.toggleTheme(); } },
+                        { id: 'advanced', label: 'Toggle advanced download options', icon: 'fa-solid fa-sliders', action: () => { this.currentTab = 'home'; this.advancedOpen = !this.advancedOpen; } }
+                    ];
+                },
+
+                get filteredCommands() {
+                    const query = this.commandQuery.trim().toLowerCase();
+                    return this.commands.filter(command => !query || command.label.toLowerCase().includes(query));
+                },
+
+                runCommand(command) {
+                    command.action();
+                    this.commandPaletteOpen = false;
+                    this.commandQuery = '';
+                },
+
+                handleGlobalKeydown(event) {
+                    const target = event.target;
+                    const typing = ['INPUT', 'TEXTAREA', 'SELECT'].includes(target?.tagName) || target?.isContentEditable;
+                    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+                        event.preventDefault();
+                        this.commandPaletteOpen = !this.commandPaletteOpen;
+                        if (this.commandPaletteOpen) this.$nextTick(() => this.$refs.commandInput?.focus());
+                        return;
+                    }
+                    if (event.altKey && /^[1-6]$/.test(event.key)) {
+                        event.preventDefault();
+                        this.currentTab = this.tabs[Number(event.key) - 1].id;
+                        return;
+                    }
+                    if (!typing && event.key === '/') {
+                        event.preventDefault();
+                        this.currentTab = 'home';
+                        this.$nextTick(() => this.$refs.urlInput?.focus());
+                    }
                 },
 
                 get batchUrlsList() {
@@ -1513,6 +2017,54 @@
                     return this.networkModes.find(mode => mode.id === this.settings.network_mode)?.description || '';
                 },
 
+                get playlistStorageKey() {
+                    const identity = this.videoInfo?.id || this.videoInfo?.webpage_url || this.url;
+                    return identity ? `velo-playlist-${identity}` : '';
+                },
+
+                get playlistSelectedCount() {
+                    return this.playlistItems.filter(item => item.selected).length;
+                },
+
+                get playlistCompletedCount() {
+                    return this.playlistItems.filter(item => item.status === 'completed').length;
+                },
+
+                get playlistActionableCount() {
+                    return this.playlistItems.filter(item =>
+                        item.selected && !['completed', 'skipped'].includes(item.status)).length;
+                },
+
+                get playlistCompletionPercent() {
+                    const selected = this.playlistItems.filter(item => item.selected);
+                    if (!selected.length) return 0;
+                    return Math.round(selected.filter(item => ['completed', 'skipped'].includes(item.status)).length / selected.length * 100);
+                },
+
+                get availableSubtitleLanguages() {
+                    const manual = this.videoInfo?.subtitles || {};
+                    const automatic = this.videoInfo?.automatic_captions || {};
+                    const defaults = this.videoInfo ? [] : this.commonSubtitleLanguages;
+                    const tracks = new Map(defaults.map(track => [track.code, { ...track, common: true }]));
+
+                    for (const code of [...Object.keys(manual), ...Object.keys(automatic)]) {
+                        if (code === 'live_chat') continue;
+                        const variants = manual[code] || automatic[code] || [];
+                        const named = variants.find(item => item?.name)?.name;
+                        tracks.set(code, {
+                            code,
+                            name: named || code,
+                            automatic: !manual[code]
+                        });
+                    }
+
+                    for (const code of this.settings.subtitle_languages) {
+                        if (!tracks.has(code)) tracks.set(code, { code, name: code });
+                    }
+
+                    return [...tracks.values()].sort((a, b) => a.name.localeCompare(b.name));
+                },
+
                 init() {
                     this.isDark = localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : true;
                     this.language = localStorage.getItem('language') || 'en';
@@ -1522,6 +2074,9 @@
                     this.fetchStats();
                     this.fetchBatchState();
                     this.fetchSettings();
+                    this.fetchDiagnostics();
+                    this.fetchRecovery();
+                    this.fetchLogs();
                     setInterval(() => this.fetchBatchState(), 2500);
                 },
 
@@ -1532,6 +2087,96 @@
                 setLanguage(language) {
                     this.language = language;
                     localStorage.setItem('language', language);
+                },
+
+                ensureSubtitleLanguage() {
+                    if (!this.settings.download_subtitles || this.settings.subtitle_languages.length) return;
+                    const tracks = this.availableSubtitleLanguages;
+                    const preferred = tracks.find(track => track.code === this.language)
+                        || tracks.find(track => track.code === 'en')
+                        || tracks[0];
+                    if (preferred) this.settings.subtitle_languages = [preferred.code];
+                },
+
+                initializePlaylistChecklist(info) {
+                    const entries = Array.isArray(info?.entries) ? info.entries.filter(Boolean) : [];
+                    if (!entries.length) {
+                        this.playlistItems = [];
+                        return;
+                    }
+                    let saved = {};
+                    try {
+                        const raw = localStorage.getItem(`velo-playlist-${info.id || info.webpage_url || this.url}`);
+                        saved = raw ? JSON.parse(raw) : {};
+                    } catch (error) {
+                        saved = {};
+                    }
+                    this.playlistItems = entries.map((entry, offset) => {
+                        const index = Number(entry.playlist_index || entry.index || offset + 1);
+                        const previous = saved[String(entry.id || index)] || {};
+                        const previousStatus = ['completed', 'skipped', 'failed'].includes(previous.status) ? previous.status : 'pending';
+                        return {
+                            id: entry.id || String(index),
+                            index,
+                            title: entry.title || `Playlist item ${index}`,
+                            duration: entry.duration || 0,
+                            selected: previous.selected ?? true,
+                            status: previousStatus,
+                            progress: ['completed', 'skipped'].includes(previousStatus) ? 100 : 0,
+                            filepath: previous.filepath || ''
+                        };
+                    });
+                    this.settings.single_video = false;
+                },
+
+                savePlaylistChecklist() {
+                    if (!this.playlistStorageKey) return;
+                    const saved = {};
+                    for (const item of this.playlistItems) {
+                        saved[String(item.id || item.index)] = {
+                            selected: item.selected,
+                            status: item.status,
+                            filepath: item.filepath || ''
+                        };
+                    }
+                    localStorage.setItem(this.playlistStorageKey, JSON.stringify(saved));
+                },
+
+                selectAllPlaylistItems(selected) {
+                    this.playlistItems = this.playlistItems.map(item => ({ ...item, selected }));
+                    this.savePlaylistChecklist();
+                },
+
+                selectPendingPlaylistItems() {
+                    this.playlistItems = this.playlistItems.map(item => ({
+                        ...item,
+                        selected: !['completed', 'skipped'].includes(item.status)
+                    }));
+                    this.savePlaylistChecklist();
+                },
+
+                resetPlaylistProgress() {
+                    this.playlistItems = this.playlistItems.map(item => ({
+                        ...item,
+                        status: 'pending',
+                        progress: 0,
+                        filepath: ''
+                    }));
+                    this.savePlaylistChecklist();
+                    this.showToast('Playlist checklist reset');
+                },
+
+                updatePlaylistItem(update) {
+                    const position = this.playlistItems.findIndex(item =>
+                        Number(item.index) === Number(update.index)
+                        || (update.id && item.id === update.id));
+                    if (position < 0) return;
+                    const next = [...this.playlistItems];
+                    next[position] = { ...next[position], ...update };
+                    this.playlistItems = next;
+                    if (update.status === 'completed' || update.status === 'failed') {
+                        this.savePlaylistChecklist();
+                    }
                 },
 
                 toggleTheme() {
@@ -1574,6 +2219,18 @@
                     this.settings.format = this.serverSettings.default_format || this.settings.format;
                     this.settings.quality = this.serverSettings.default_quality || this.settings.quality;
                     this.settings.network_mode = this.serverSettings.network_mode || this.settings.network_mode;
+                    this.settings.download_subtitles = this.serverSettings.download_subtitles ?? this.settings.download_subtitles;
+                    this.settings.subtitle_languages = Array.isArray(this.serverSettings.subtitle_languages)
+                        ? this.serverSettings.subtitle_languages
+                        : this.settings.subtitle_languages;
+                    this.settings.embed_subtitles = this.serverSettings.embed_subtitles ?? this.settings.embed_subtitles;
+                    this.settings.burn_subtitles = this.serverSettings.burn_subtitles ?? false;
+                    this.settings.subtitle_source = this.serverSettings.subtitle_source || this.settings.subtitle_source;
+                    this.settings.subtitle_format = this.serverSettings.subtitle_format || this.settings.subtitle_format;
+                    this.settings.browser_cookie_source = this.serverSettings.browser_cookie_source || 'none';
+                    this.settings.browser_profile = this.serverSettings.browser_profile || '';
+                    this.settings.organize_playlists = this.serverSettings.organize_playlists ?? true;
+                    this.settings.include_video_id = this.serverSettings.include_video_id ?? true;
                 },
 
                 async fetchMeta() {
@@ -1594,12 +2251,74 @@
                     this.serverSettings.default_format = this.settings.format;
                     this.serverSettings.default_quality = this.settings.quality;
                     this.serverSettings.network_mode = this.settings.network_mode;
-                    await fetch('/api/settings', {
+                    this.serverSettings.download_subtitles = this.settings.download_subtitles;
+                    this.serverSettings.subtitle_languages = this.settings.subtitle_languages;
+                    this.serverSettings.embed_subtitles = this.settings.embed_subtitles;
+                    this.serverSettings.burn_subtitles = this.settings.burn_subtitles;
+                    this.serverSettings.subtitle_source = this.settings.subtitle_source;
+                    this.serverSettings.subtitle_format = this.settings.subtitle_format;
+                    this.serverSettings.browser_cookie_source = this.settings.browser_cookie_source;
+                    this.serverSettings.browser_profile = this.settings.browser_profile;
+                    this.serverSettings.organize_playlists = this.settings.organize_playlists;
+                    this.serverSettings.include_video_id = this.settings.include_video_id;
+                    const response = await fetch('/api/settings', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(this.serverSettings)
                     });
+                    if (!response.ok) {
+                        const data = await response.json();
+                        this.showToast(data.error || 'Unable to save preferences', 'error');
+                        return;
+                    }
                     this.showToast('Preferences saved');
+                },
+
+                async fetchDiagnostics() {
+                    const response = await fetch('/api/diagnostics');
+                    if (response.ok) this.diagnostics = await response.json();
+                },
+
+                async fetchRecovery() {
+                    const response = await fetch('/api/recovery');
+                    if (response.ok) this.incompleteDownloads = await response.json();
+                },
+
+                async fetchLogs() {
+                    const response = await fetch('/api/logs?lines=200');
+                    if (response.ok) this.logLines = (await response.json()).lines || [];
+                },
+
+                async removePartial(item) {
+                    if (!window.confirm(`Remove incomplete file ${item.name}?`)) return;
+                    const response = await fetch('/api/recovery', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ path: item.path })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        this.showToast(data.error || 'Unable to remove partial file', 'error');
+                        return;
+                    }
+                    await this.fetchRecovery();
+                    this.showToast('Incomplete file removed');
+                },
+
+                async verifyFile(item) {
+                    const response = await fetch('/api/verify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ path: item.filepath })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        this.showToast(data.error || 'Media verification failed', 'error');
+                        return;
+                    }
+                    const streams = data.probe?.streams || [];
+                    const summary = streams.map(stream => stream.codec_name).filter(Boolean).join(' + ');
+                    this.showToast(`File is readable${summary ? `: ${summary}` : ''}`);
                 },
 
                 applyPreset(preset) {
@@ -1678,7 +2397,7 @@
                         const res = await fetch('/api/estimate', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ url: this.url })
+                            body: JSON.stringify({ url: this.url, ...this.settings })
                         });
                         const data = await res.json();
                         if (!res.ok) throw new Error(data.error || 'Estimate failed');
@@ -1721,8 +2440,13 @@
 
                         if (payload.type === 'info') {
                             this.videoInfo = payload.data;
+                            this.initializePlaylistChecklist(payload.data);
                             this.isFetching = false;
                             this.showToast('Analysis complete');
+                        } else if (payload.type === 'playlist_item_update') {
+                            this.updatePlaylistItem(payload.item);
+                        } else if (payload.type === 'playlist_item_complete') {
+                            this.updatePlaylistItem(payload.item);
                         } else if (payload.type === 'progress') {
                             const d = payload.data;
                             if (d.status === 'downloading') {
@@ -1740,15 +2464,36 @@
                             }
                         } else if (payload.type === 'success') {
                             this.downloadStatus = 'success';
-                            this.downloadMessage = 'Download complete.';
+                            const missingSubtitles = payload.info?.velo_missing_subtitles || [];
+                            const subtitleWarnings = payload.info?.velo_subtitle_warnings || [];
+                            this.downloadMessage = missingSubtitles.length
+                                ? `Video saved, but subtitles were unavailable: ${missingSubtitles.join(', ')}`
+                                : (subtitleWarnings[0] || 'Download complete.');
                             this.lastDownloadedFile = payload.filepath;
-                            this.showToast('Downloaded successfully');
+                            if (this.playlistItems.length) {
+                                this.playlistItems = this.playlistItems.map(item =>
+                                    item.selected && ['pending', 'queued', 'processing'].includes(item.status)
+                                        ? { ...item, status: 'skipped', progress: 100 }
+                                        : item);
+                                this.savePlaylistChecklist();
+                            }
+                            this.showToast(
+                                missingSubtitles.length || subtitleWarnings.length ? this.downloadMessage : 'Downloaded successfully',
+                                missingSubtitles.length || subtitleWarnings.length ? 'error' : 'success'
+                            );
                             this.fetchHistory();
                             this.fetchStats();
                         } else if (payload.type === 'error') {
                             this.isFetching = false;
                             this.downloadStatus = 'error';
                             this.downloadMessage = payload.message;
+                            if (this.playlistItems.length) {
+                                this.playlistItems = this.playlistItems.map(item =>
+                                    ['downloading', 'processing'].includes(item.status)
+                                        ? { ...item, status: 'failed' }
+                                        : item);
+                                this.savePlaylistChecklist();
+                            }
                             this.showToast(payload.message, 'error');
                         } else if (payload.type === 'clip_status') {
                             this.clipStatus = 'processing';
@@ -1776,7 +2521,15 @@
                         } else if (payload.type === 'batch_progress') {
                             this.batch.percent = payload.percent;
                         } else if (payload.type === 'batch_item_success') {
-                            this.batch.logs.unshift({ id: Date.now() + Math.random(), type: 'success', msg: `Saved: ${payload.title}` });
+                            const missing = payload.missing_subtitles || [];
+                            const warnings = payload.subtitle_warnings || [];
+                            this.batch.logs.unshift({
+                                id: Date.now() + Math.random(),
+                                type: missing.length || warnings.length ? 'error' : 'success',
+                                msg: missing.length
+                                    ? `Saved ${payload.title}, but subtitles were unavailable: ${missing.join(', ')}`
+                                    : (warnings.length ? `Saved ${payload.title}: ${warnings.join('; ')}` : `Saved: ${payload.title}`)
+                            });
                             this.fetchHistory();
                             this.fetchStats();
                         } else if (payload.type === 'batch_item_error') {
@@ -1792,17 +2545,23 @@
                     if (!this.url) return;
                     this.isFetching = true;
                     this.videoInfo = null;
+                    this.playlistItems = [];
                     this.downloadStatus = 'idle';
                     this.downloadMessage = '';
                     this.downloadPercent = 0;
                     this.downloadSpeed = '';
                     this.downloadEta = '';
                     try {
-                        await fetch('/api/fetch', {
+                        const response = await fetch('/api/fetch', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ url: this.url, single_video: this.settings.single_video })
+                            body: JSON.stringify({ url: this.url, ...this.settings })
                         });
+                        if (!response.ok) {
+                            const data = await response.json();
+                            this.isFetching = false;
+                            this.showToast(data.error || 'Unable to analyze link', 'error');
+                        }
                     } catch (e) {
                         this.isFetching = false;
                         this.showToast('Network error', 'error');
@@ -1811,16 +2570,39 @@
 
                 async startDownload() {
                     if (!this.url) return;
+                    const requestSettings = { ...this.settings };
+                    if (this.playlistItems.length) {
+                        const selected = this.playlistItems.filter(item =>
+                            item.selected && !['completed', 'skipped'].includes(item.status));
+                        if (!selected.length) {
+                            this.showToast('Select at least one pending playlist video', 'error');
+                            return;
+                        }
+                        const selectedIndexes = new Set(selected.map(item => Number(item.index)));
+                        this.playlistItems = this.playlistItems.map(item =>
+                            selectedIndexes.has(Number(item.index))
+                                ? { ...item, status: 'queued', progress: 0 }
+                                : item);
+                        requestSettings.single_video = false;
+                        requestSettings.playlist_items = selected.map(item => item.index).join(',');
+                        this.savePlaylistChecklist();
+                    }
                     this.downloadStatus = 'downloading';
                     this.downloadMessage = 'Initializing...';
                     this.downloadPercent = 0;
                     this.downloadSpeed = '';
                     this.downloadEta = '';
-                    await fetch('/api/download', {
+                    const response = await fetch('/api/download', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: this.url, ...this.settings })
+                        body: JSON.stringify({ url: this.url, ...requestSettings })
                     });
+                    if (!response.ok) {
+                        const data = await response.json();
+                        this.downloadStatus = 'error';
+                        this.downloadMessage = data.error || 'Download could not start';
+                        this.showToast(this.downloadMessage, 'error');
+                    }
                 },
 
                 async cancelDownload() {
@@ -1862,11 +2644,17 @@
                     this.batch.totalCount = urls.length;
                     this.batch.currentUrl = '';
                     this.batch.percent = '0%';
-                    await fetch('/api/batch', {
+                    const response = await fetch('/api/batch', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ urls: urls, config: this.settings })
                     });
+                    if (!response.ok) {
+                        const data = await response.json();
+                        this.batch.status = 'idle';
+                        this.showToast(data.error || 'Batch could not start', 'error');
+                        return;
+                    }
                     this.fetchBatchState();
                     this.showToast(`Batch queued: ${urls.length} items`);
                 },
@@ -1896,11 +2684,15 @@
                 },
 
                 async openFile(path, isFolder) {
-                    await fetch('/api/open', {
+                    const response = await fetch('/api/open', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ path, is_folder: isFolder })
                     });
+                    if (!response.ok) {
+                        const data = await response.json();
+                        this.showToast(data.error || 'Unable to open path', 'error');
+                    }
                 }
             }
         }

@@ -26,7 +26,12 @@ Built specifically to handle real-world network conditions—including unstable 
 *   **🌗 Local Web Dashboard**: A sleek, Vercel-inspired interface with light/dark mode support.
 *   **📶 Resilient Network Modes**: Choose from *Stable*, *Balanced*, *Turbo*, and *Data Saver* to adapt to your connection.
 *   **🛠️ Versatile Workflows**: Support for single video downloads, audio extraction, batch queues, and precise clip making.
+*   **💬 Multi-language Subtitles**: Select several authored or automatic subtitle languages, keep sidecar files, and optionally embed switchable tracks in MP4 videos.
 *   **⏯️ Advanced Queue Controls**: Pause, resume, stop, retry failed items, deduplicate links, and requeue directly from history.
+*   **💾 Restart Recovery**: Batch jobs persist in SQLite and queued work resumes after restarting Velo.
+*   **✅ Playlist Checklist**: Analyze a playlist, select individual episodes, and track pending, downloading, processing, completed, or skipped videos like a to-do list.
+*   **🩺 Health Center**: Inspect FFmpeg, ffprobe, yt-dlp, disk space, logs, and incomplete downloads from Settings.
+*   **🔐 Browser Authentication**: Optionally use a local browser profile for content that requires an authenticated session.
 *   **📊 Insights & Statistics**: Built-in dashboard tracking total downloads, storage usage, top channels, formats, and daily activity.
 *   **📁 Seamless Management**: Search history, filter by channel, copy file paths, and open folders directly from the UI.
 *   **🌍 Multilingual**: UI foundation with support for English and Arabic.
@@ -62,6 +67,11 @@ Get Velo running locally in a few simple steps:
 2. **Install dependencies**:
    ```powershell
    pip install -r requirements.txt
+   ```
+
+   Contributors can install the test and packaging tools with:
+   ```powershell
+   pip install -r requirements-dev.txt
    ```
 
 3. **Start the application**:
@@ -105,14 +115,21 @@ Velo provides a comprehensive local API for developers:
 *   `GET /api/batch/state` - Inspect the current state of batch jobs.
 *   `POST /api/batch/control` - Pause, resume, stop, or retry jobs.
 *   `POST /api/clip` - Generate a specified media clip.
+*   `GET /api/diagnostics` - Inspect dependencies, storage, and queue health.
+*   `GET /api/logs` - Read the bounded local application log.
+*   `GET` & `DELETE /api/recovery` - Inspect or remove incomplete `.part` downloads.
+*   `POST /api/verify` - Validate a managed media file and inspect its streams with ffprobe.
+
+Browser authentication reads cookies directly through yt-dlp. Velo never writes cookie values to its application log. Use this option only with a local browser profile you trust.
 
 ---
 
 ## 🧪 Testing
 
-Run the included pytest suite to verify settings, history management, and statistics helpers:
+Install the development dependencies and run the complete test suite:
 
 ```powershell
+pip install -r requirements-dev.txt
 python -m pytest
 ```
 
@@ -120,13 +137,14 @@ python -m pytest
 
 ## 📦 Packaging for Production
 
-To create a professional, standalone Windows executable using PyInstaller:
+To create a standalone executable with the bundled templates, fonts, and static assets:
 
 ```powershell
-pip install pyinstaller
-pyinstaller --onefile --name Velo main.py
+pip install -r requirements-dev.txt
+pyinstaller --clean Velo.spec
 ```
-*Tip: For a polished release, add a custom app icon, sign your installer, and include detailed release notes!*
+
+The packaged application is written to `dist/Velo`. FFmpeg must still be installed on the target system and available on `PATH`.
 
 ---
 

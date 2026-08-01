@@ -285,9 +285,32 @@ class AppUI(ctk.CTk):
         self.embed_metadata_checkbox = ctk.CTkCheckBox(self.options_frame, text="Embed Cover Art & Metadata", variable=self.embed_metadata_var, text_color=TEXT_MAIN)
         self.embed_metadata_checkbox.grid(row=3, column=2, columnspan=2, padx=10, pady=10, sticky="w")
 
+        self.download_subtitles_var = ctk.BooleanVar(value=False)
+        self.download_subtitles_checkbox = ctk.CTkCheckBox(
+            self.options_frame, text="Download multi-language subtitles",
+            variable=self.download_subtitles_var, text_color=TEXT_MAIN)
+        self.download_subtitles_checkbox.grid(row=4, column=0, columnspan=2, padx=20, pady=10, sticky="w")
+
+        self.embed_subtitles_var = ctk.BooleanVar(value=True)
+        self.embed_subtitles_checkbox = ctk.CTkCheckBox(
+            self.options_frame, text="Embed subtitles in video",
+            variable=self.embed_subtitles_var, text_color=TEXT_MAIN)
+        self.embed_subtitles_checkbox.grid(row=4, column=2, columnspan=2, padx=10, pady=10, sticky="w")
+
+        ctk.CTkLabel(
+            self.options_frame, text="Subtitle languages:",
+            font=ctk.CTkFont(family=FONT_MAIN, size=14, weight="bold"),
+            text_color=TEXT_MAIN).grid(row=5, column=0, padx=20, pady=10, sticky="w")
+        saved_subtitle_languages = self.settings.get("subtitle_languages", ["en"])
+        self.subtitle_languages_var = ctk.StringVar(value=", ".join(saved_subtitle_languages))
+        self.subtitle_languages_entry = ctk.CTkEntry(
+            self.options_frame, textvariable=self.subtitle_languages_var,
+            placeholder_text="en, ar, es", fg_color=BG_COLOR, text_color=TEXT_MAIN)
+        self.subtitle_languages_entry.grid(row=5, column=1, columnspan=3, padx=(10, 20), pady=10, sticky="ew")
+
         self.download_archive_var = ctk.BooleanVar(value=False)
         self.download_archive_checkbox = ctk.CTkCheckBox(self.options_frame, text="Smart Sync (Only download new)", variable=self.download_archive_var, text_color=TEXT_MAIN)
-        self.download_archive_checkbox.grid(row=4, column=0, columnspan=2, padx=20, pady=(10, 20), sticky="w")
+        self.download_archive_checkbox.grid(row=6, column=0, columnspan=2, padx=20, pady=(10, 20), sticky="w")
         
         self.action_frame = ctk.CTkFrame(self.home_frame, fg_color="transparent")
         self.action_frame.grid(row=4, column=0, sticky="sew")
@@ -477,7 +500,12 @@ class AppUI(ctk.CTk):
         self.open_folder_btn.pack_forget()
         
         single_video = self.single_video_var.get() if hasattr(self, 'single_video_var') else True
-        self.downloader.fetch_info(url, single_video=single_video)
+        self.downloader.fetch_info(
+            url,
+            single_video=single_video,
+            browser_cookie_source=self.settings.get("browser_cookie_source", "none"),
+            browser_profile=self.settings.get("browser_profile", ""),
+        )
 
     def handle_info_fetched(self, info):
         self.current_video_info = info
@@ -626,6 +654,9 @@ class AppUI(ctk.CTk):
         sponsorblock = self.sponsorblock_var.get() if hasattr(self, 'sponsorblock_var') else False
         embed_metadata = self.embed_metadata_var.get() if hasattr(self, 'embed_metadata_var') else False
         download_archive = self.download_archive_var.get() if hasattr(self, 'download_archive_var') else False
+        download_subtitles = self.download_subtitles_var.get() if hasattr(self, 'download_subtitles_var') else False
+        subtitle_languages = self.subtitle_languages_var.get() if hasattr(self, 'subtitle_languages_var') else "en"
+        embed_subtitles = self.embed_subtitles_var.get() if hasattr(self, 'embed_subtitles_var') else True
         
         if not url:
             messagebox.showwarning("Warning", "Please enter a URL first.")
@@ -654,7 +685,17 @@ class AppUI(ctk.CTk):
             download_transcript=download_transcript,
             sponsorblock=sponsorblock,
             embed_metadata=embed_metadata,
-            download_archive=download_archive
+            download_archive=download_archive,
+            download_subtitles=download_subtitles,
+            subtitle_languages=subtitle_languages,
+            embed_subtitles=embed_subtitles,
+            subtitle_source=self.settings.get("subtitle_source", "prefer_manual"),
+            subtitle_format=self.settings.get("subtitle_format", "vtt"),
+            browser_cookie_source=self.settings.get("browser_cookie_source", "none"),
+            browser_profile=self.settings.get("browser_profile", ""),
+            organize_playlists=self.settings.get("organize_playlists", True),
+            include_video_id=self.settings.get("include_video_id", True),
+            burn_subtitles=self.settings.get("burn_subtitles", False),
         )
 
     def cancel_download(self):
@@ -689,12 +730,24 @@ class AppUI(ctk.CTk):
 
     def handle_success(self, filepath, info):
         self.last_download_path = filepath
+        missing_subtitles = info.get('velo_missing_subtitles', [])
+        subtitle_warnings = info.get('velo_subtitle_warnings', [])
         
         video_info = self.current_video_info if self.current_video_info else info
         add_to_history(video_info, filepath)
         
         def update_ui():
-            self.status_label.configure(text="Download complete!", text_color=("#10B981", "#00FF88"))
+            if missing_subtitles:
+                missing = ", ".join(missing_subtitles)
+                self.status_label.configure(
+                    text=f"Video saved, but subtitles were unavailable: {missing}",
+                    text_color=("#D97706", "#FFB300"))
+            elif subtitle_warnings:
+                self.status_label.configure(
+                    text=f"Download complete: {subtitle_warnings[0]}",
+                    text_color=("#D97706", "#FFB300"))
+            else:
+                self.status_label.configure(text="Download complete!", text_color=("#10B981", "#00FF88"))
             self.progress_bar.set(1.0)
             self.stats_label.configure(text="100% | Done")
             self.reset_download_buttons()

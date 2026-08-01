@@ -17,6 +17,27 @@ def test_settings_defaults_are_merged(tmp_path, monkeypatch):
     assert settings["default_quality"] == "best"
     assert settings["default_format"] == "video"
     assert settings["network_mode"] == "stable"
+    assert settings["organize_playlists"] is True
+
+
+def test_media_url_validation_blocks_local_targets():
+    assert utils.validate_media_url("https://www.youtube.com/watch?v=abc") is True
+    assert utils.validate_media_url("file:///etc/passwd") is False
+    assert utils.validate_media_url("http://127.0.0.1:8000/private") is False
+    assert utils.validate_media_url("http://localhost/private") is False
+
+
+def test_open_path_is_limited_to_downloads_and_history(tmp_path):
+    downloads = tmp_path / "downloads"
+    downloads.mkdir()
+    media = downloads / "video.mp4"
+    media.write_bytes(b"video")
+    outside = tmp_path / "secret.txt"
+    outside.write_text("secret", encoding="utf-8")
+
+    assert utils.is_allowed_open_path(media, downloads, []) is True
+    assert utils.is_allowed_open_path(outside, downloads, []) is False
+    assert utils.is_allowed_open_path(outside, downloads, [{"filepath": str(outside)}]) is True
 
 
 def test_clear_history_empties_history_file(tmp_path, monkeypatch):
